@@ -7,7 +7,7 @@ class FinnhubFinanceApi {
   static async getStockNews(symbol) {
       // symbol: stock ticker, from/to: YYYY-MM-DD
       const to = new Date().toISOString().slice(0, 10); // today, YYYY-MM-DD
-      const from = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10); // 21 days ago
+      const from = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10); // 21 days ago
       
     const apiKey = process.env.REACT_APP_FINNHUB_API_KEY;
     const url = `${this.API_BASE_URL}/company-news?symbol=${symbol}&from=${from}&to=${to}&token=${apiKey}`;

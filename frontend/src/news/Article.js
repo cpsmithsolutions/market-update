@@ -13,7 +13,7 @@ const Article = ({ data }) => {
 
   return (
     <div className="Article">
-      <a aria-label="See Article" className="Article-link" href={data.link}>
+      <a aria-label="See Article" className="Article-link" href={data.url}>
         <div className="Article-date"> {shortenedDate}</div>
       </a>
       <h5 className="Article-title" onClick={handleDetails}>
@@ -24,7 +24,7 @@ const Article = ({ data }) => {
           <div>
             {" "}
             {description}
-            <a className="Article-link" target="_blank" rel="noopener noreferrer" href={data.link}>Full Article</a>{" "}
+            <a className="Article-link" target="_blank" rel="noopener noreferrer" href={data.url}>Full Article</a>{" "}
           </div>
         ) : (
           ""
