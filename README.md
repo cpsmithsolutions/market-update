@@ -23,7 +23,7 @@ Node.js, Express, PostgreSQL
 Create and account to get your Api Key
 
 <https://rapidapi.com/apidojo/api/yahoo-finance1>
-
+<https://finnhub.io/>
 
 **Important Notes on Setup**
 
@@ -40,7 +40,7 @@ Create and account to get your Api Key
 
 **Front End**
 
-1. Create an apiKey.js file and add your Api Key to a variable called YahooFinanceApiKey, export YahooFinanceApiKey variable, and import YahooFinanceApiKey into YahooFinanceApi.js 
+1. add an .env file and add the api keys for the finance API's REACT_APP_YAHOO_FINANCE_API_KEY, REACT_APP_FINNHUB_API_KEY 
 1. Install dependencies (npm install)
 2. Start front end server (npm start)
 
