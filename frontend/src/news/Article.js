@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import "./Article.css";
 const Article = ({ data }) => {
   const [expand, setExpand] = useState(false);
-  const shortenedDate = data.pubDate.slice(0, 16);
-  const description = `${data.description} `;
+
+  const shortenedDate = new Date(data.datetime * 1000).toLocaleDateString();
+  const description = `${data.summary} `;
 
   function handleDetails() {
     if (!expand) setExpand(true);
@@ -16,14 +17,14 @@ const Article = ({ data }) => {
         <div className="Article-date"> {shortenedDate}</div>
       </a>
       <h5 className="Article-title" onClick={handleDetails}>
-        {data.title}
+        {data.headline}
       </h5>
       <div className="Article-description">
         {expand ? (
           <div>
             {" "}
             {description}
-            <a href={data.link}>Full Article</a>{" "}
+            <a className="Article-link" target="_blank" rel="noopener noreferrer" href={data.link}>Full Article</a>{" "}
           </div>
         ) : (
           ""

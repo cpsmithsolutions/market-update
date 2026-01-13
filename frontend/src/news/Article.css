@@ -8,6 +8,7 @@
 }
 .Article-link {
   color: rgb(200, 210, 236);
+  cursor: pointer;
 }
 
 .Article-title:hover {

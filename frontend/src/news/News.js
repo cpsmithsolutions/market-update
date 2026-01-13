@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import YahooFinanceApi from "../api/YahooFinanceApi";
 import Article from "./Article";
 import ChaseLoading from "../chaseloading/ChaseLoading";
+import FinnhubFinanceApi from "../api/FinnhubFinanceApi";
 
 const News = ({ ticker }) => {
   const [stockNews, setStockNews] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function getNews(ticker) {
-      const res = await YahooFinanceApi.getStockNews(ticker);
-      setStockNews(() => res);
+      const res = await FinnhubFinanceApi.getStockNews(ticker);
+      if (res) {
+            setStockNews(res);
+      }
       setLoading(false);
     }
 
@@ -29,7 +31,7 @@ const News = ({ ticker }) => {
     return <div className="News">No News</div>;
   }
   for (let i = 0; i < 5; i++) {
-    articles.push(<Article key={stockNews[i].link} data={stockNews[i]} />);
+    articles.push(<Article key={stockNews[i].url} data={stockNews[i]} />);
   }
 
   return <div className="News">{articles}</div>;

@@ -18,6 +18,7 @@ const SearchForm = ({ search }) => {
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
+    if (formData.searchTerm === "") return;
     await search(formData.searchTerm);
     setFormData(initialData);
   };

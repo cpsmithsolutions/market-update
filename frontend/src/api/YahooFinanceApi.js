@@ -56,37 +56,6 @@ class YahooFinanceApi {
 
     return result;
   }
-  static async getStockNews(symbol) {
-    const headers = {
-      "x-rapidapi-key": process.env.REACT_APP_YAHOO_FINANCE_API_KEY,
-      "x-rapidapi-host": `yahoo-finance15.p.rapidapi.com`,
-    };
-
-    const response = await axios.get(
-      `https://yahoo-finance15.p.rapidapi.com/api/yahoo/ne/news/${symbol}`,
-      { headers }
-    );
-    if (!response.data.item) {
-      return "No News On This Stock";
-    }
-
-    return response.data.item;
-  }
-
-  static async getStockNewsSummary() {
-    const headers = {
-      "x-rapidapi-key": process.env.REACT_APP_YAHOO_FINANCE_API_KEY,
-      "x-rapidapi-host": `yahoo-finance15.p.rapidapi.com`,
-    };
-
-    const response = await axios.get(
-      `https://yahoo-finance15.p.rapidapi.com/api/yahoo/ne/news`,
-      { headers }
-    );
-
-    return response.data;
-  }
-
   static async getMarketSummary() {
     const res = await this.request(`market/v2/get-summary`);
 

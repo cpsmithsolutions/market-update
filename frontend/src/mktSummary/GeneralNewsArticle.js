@@ -9,18 +9,18 @@ const GeneralNewsArticle = ({ data }) => {
     else setExpand(false);
   }
 
-  const source = `${data.source} `;
+  const source = `${data.summary} `;
 
   return (
     <div className="Article">
       <h5 className="Article-title" onClick={handleDetails}>
-        {data.title}
+        {data.headline}
       </h5>
       <div className="Article-source">
         {expand ? (
           <div>
             {source}
-            <a href={data.link}>Full Article</a>
+            <a className="Article-link" target="_blank" rel="noopener noreferrer" href={data.url}>Full Article</a>
           </div>
         ) : (
           ""
