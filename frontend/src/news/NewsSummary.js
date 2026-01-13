@@ -12,15 +12,12 @@ const NewsSummary = ({ numberOfArticles }) => {
     async function getSummary() {
       const res2 = await FinnhubFinanceApi.getStockNewsSummary();
       if (res2) {
-        let newsArray = [];
-        for (let i = 0; i < numberOfArticles; i++) {
-          if (res2[i] && res2[i].url) {
-            newsArray.push(
-              <GeneralNewsArticle key={res2[i].url} data={res2[i]} />
-            );
-          }
-        }
-
+        const newsArray = res2
+          .slice(0, numberOfArticles)
+          .filter(article => article && article.url)
+          .map(article => (
+            <GeneralNewsArticle key={article.url} data={article} />
+          ));
         setNewsData(newsArray);
         setLoading(false);
       }

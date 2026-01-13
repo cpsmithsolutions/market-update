@@ -26,13 +26,14 @@ const News = ({ ticker }) => {
     );
   }
 
-  const articles = [];
-  if (stockNews === "No News On This Stock") {
+
+  if (stockNews.length === 0) {
     return <div className="News">No News</div>;
   }
-  for (let i = 0; i < 5; i++) {
-    articles.push(<Article key={stockNews[i].url} data={stockNews[i]} />);
-  }
+
+  const articles = stockNews.map((article) => (
+    <Article key={article.url} data={article} />
+  ));
 
   return <div className="News">{articles}</div>;
 };

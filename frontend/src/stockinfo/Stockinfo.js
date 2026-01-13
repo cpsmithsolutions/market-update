@@ -23,7 +23,7 @@ const Stockinfo = ({ ticker }) => {
   const [chartData, setChartData] = useState(null);
   const currentUser = useSelector((store) => store.currentUser);
   const [collapse, setCollapse] = useState(false);
-  const [collapseNews, setCollapseNews] = useState(true);
+  const [collapseNews, setCollapseNews] = useState(false);
 
   let alreadyAdded = [];
   if (Object.keys(currentUser).length > 0) {
