@@ -1,5 +1,4 @@
 import axios from "axios";
-const BASE_URL = "https://apidojo-yahoo-finance-v1.p.rapidapi.com";
 
 
 class FinnhubFinanceApi {
