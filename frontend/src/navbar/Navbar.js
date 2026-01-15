@@ -14,7 +14,7 @@ function NavBar({ logOut }) {
   return (
     <div className="NavBar">
       <Navbar className="navbar" expand="md" dark>
-        <NavLink className="Navbar-brand" to="/">
+        <NavLink className="Navbar-brand" to="/" end>
           <span className="Navbar-logo">
             <img
               width="25px"
@@ -32,6 +32,11 @@ function NavBar({ logOut }) {
           <Nav className="ml-auto" navbar>
             {Object.keys(currentUser).length ? (
               <>
+                <NavItem>
+                  <NavLink className="navlinks" to="/" exact="true">
+                    Home
+                  </NavLink>
+                </NavItem>
                 <NavItem>
                   <NavLink className="navlinks" to="/news">
                     News
@@ -59,7 +64,12 @@ function NavBar({ logOut }) {
                 </NavItem>
               </>
             ) : (
-              <>
+                <>
+                <NavItem>
+                  <NavLink className="navlinks" to="/" exact="true">
+                    Home
+                  </NavLink>
+                </NavItem>
                 <NavItem>
                   <NavLink className="navlinks" to="/search">
                     Search
