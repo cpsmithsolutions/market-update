@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React from "react";
 import useSWR from "swr";
 import useRefreshInterval from "../hooks/useRefreshInterval";
 import Item from "./Item";
