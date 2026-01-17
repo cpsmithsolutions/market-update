@@ -23,7 +23,7 @@ const Watchlist = () => {
     watchlistString ? ['watchlist', watchlistString] : null,
      fetcher,
     {
-      dedupingInterval: 60000,
+      dedupingInterval: 120000,
       refreshInterval,
     }
   );
