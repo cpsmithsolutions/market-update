@@ -8,7 +8,6 @@ import NewsSummary from "../news/NewsSummary";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 
 const fetcher = () => {
-  console.log("Fetching market summary data");
  return YahooFinanceApi.searchTicker(
     "^gspc,^dji,^ixic,^rut,^tnx,usdeur=x,gc=f,cl=f,btc-usd"
   );

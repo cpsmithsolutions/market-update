@@ -25,7 +25,6 @@ const IndexItem = ({ ticker }) => {
     const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
       ticker.symbol ? ["index-chart-data", ticker.symbol] : null,
         () => {
-          console.log("Fetching index chart data for:", ticker.symbol);
           return YahooFinanceApi.getChart(ticker.symbol)
         },
       {

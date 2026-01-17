@@ -25,14 +25,13 @@ const Item = ({ ticker }) => {
   let alreadyAdded = false;
   if (Object.keys(currentUser).length)
     alreadyAdded = currentUser.watchlist.filter((t) => t === ticker.symbol);
-  const [expand, setExpand] = useState(true);
+  const [expand, setExpand] = useState(false);
   const [added, setAdded] = useState(alreadyAdded.length !== 0);
 
   const refreshInterval = useRefreshInterval();
  const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
       ticker.symbol ? ["chart-data", ticker.symbol] : null,
    () => {
-     console.log("Fetching chart data for:", ticker.symbol);
      return YahooFinanceApi.getChart(ticker.symbol)
    },
       {

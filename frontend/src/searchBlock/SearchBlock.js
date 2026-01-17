@@ -11,12 +11,9 @@ const SearchBlock = () => {
   const [noResults, setNoResults] = useState("");
 
 
-
-  console.log("SearchBlock: current searchTicker =", searchTicker);
   const { data, isLoading, error } = useSWR(
     searchTicker ? ["search-ticker", searchTicker] : null,
     async () => {
-      console.log("Fetching search data for:", searchTicker);
       const response = await YahooFinanceApi.searchTicker(searchTicker);
       return response;
     },
@@ -33,7 +30,6 @@ const SearchBlock = () => {
   } = useSWR(
     data && data.length > 0 && data[0].symbol ? ["chart-data", data[0].symbol] : null,
     () => {
-      console.log("Fetching chart data for:", data[0].symbol);
       return YahooFinanceApi.getChart(data[0].symbol);
     },
     {
