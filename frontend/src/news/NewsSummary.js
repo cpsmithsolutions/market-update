@@ -1,41 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import useSWR from "swr";
 import GeneralNewsArticle from "../mktSummary/GeneralNewsArticle";
 import "./NewsSummary.css";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 import FinnhubFinanceApi from "../api/FinnhubFinanceApi";
 
+const fetcher = () => FinnhubFinanceApi.getStockNewsSummary();
+
 const NewsSummary = ({ numberOfArticles }) => {
-  const [loading, setLoading] = useState(true);
-  const [newsData, setNewsData] = useState(null);
+  const { data, error, isLoading } = useSWR("news-summary", fetcher, {
+    dedupingInterval: 60000,
+  });
 
-  useEffect(() => {
-    async function getSummary() {
-      const res2 = await FinnhubFinanceApi.getStockNewsSummary();
-      if (res2) {
-        const newsArray = res2
-          .slice(0, numberOfArticles)
-          .filter(article => article && article.url)
-          .map(article => (
-            <GeneralNewsArticle key={article.url} data={article} />
-          ));
-        setNewsData(newsArray);
-        setLoading(false);
-      }
-    }
-    getSummary();
-  }, [numberOfArticles]);
-
-  if (loading)
+  if (isLoading)
     return (
       <div className="NewsSummary-loading">
         <ChaseLoading />
       </div>
     );
+  if (error)
+    return <div>Error loading news summary.</div>;
+
+  const newsArray = (data || [])
+    .slice(0, numberOfArticles)
+    .filter(article => article && article.url)
+    .map(article => (
+      <GeneralNewsArticle key={article.url} data={article} />
+    ));
 
   return (
     <div className="NewsSummary">
       <h3 className="NewsSummary-title">Market News</h3>
-      {newsData}
+      {newsArray}
       <br />
     </div>
   );

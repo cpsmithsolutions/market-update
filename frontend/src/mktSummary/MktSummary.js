@@ -1,7 +1,7 @@
 import React from "react";
 import useSWR from "swr";
 import YahooFinanceApi from "../api/YahooFinanceApi";
-import { isUSMarketOpen } from "../helpers/isUSMarketOpen";
+import useRefreshInterval from "../hooks/useRefreshInterval";
 import "./MktSummary.css";
 import IndexItem from "./IndexItem";
 import NewsSummary from "../news/NewsSummary";
@@ -14,7 +14,7 @@ const fetcher = () =>
 
 
 const MktSummary = () => {
-  const refreshInterval = isUSMarketOpen() ? 30000 : 0; // 30s if open, else off
+  const refreshInterval = useRefreshInterval();
   const { data: summaryData, error, isLoading } = useSWR(
     "market-summary",
     fetcher,
