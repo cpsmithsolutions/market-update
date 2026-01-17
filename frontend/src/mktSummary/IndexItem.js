@@ -24,7 +24,10 @@ const IndexItem = ({ ticker }) => {
   const refreshInterval = useRefreshInterval();
     const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
       ticker.symbol ? ["index-chart-data", ticker.symbol] : null,
-      () => YahooFinanceApi.getChart(ticker.symbol),
+        () => {
+          console.log("Fetching index chart data for:", ticker.symbol);
+          return YahooFinanceApi.getChart(ticker.symbol)
+        },
       {
         dedupingInterval: 60000,
         refreshInterval

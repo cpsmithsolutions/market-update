@@ -10,15 +10,35 @@ const SearchBlock = () => {
   const [searchTicker, setSearchTicker] = useState("");
   const [noResults, setNoResults] = useState("");
 
+
+
+  console.log("SearchBlock: current searchTicker =", searchTicker);
   const { data, isLoading, error } = useSWR(
-    searchTicker ? searchTicker : null,
-    async (ticker) => {
-      console.log("SEARCH TICKER FETCHER CALLED FOR:", ticker);
-      const response = await YahooFinanceApi.searchTicker(ticker);
+    searchTicker ? ["search-ticker", searchTicker] : null,
+    async () => {
+      console.log("Fetching search data for:", searchTicker);
+      const response = await YahooFinanceApi.searchTicker(searchTicker);
       return response;
     },
     {
       revalidateOnFocus: false,
+    }
+  );
+
+  // Fetch chart data for the found ticker (if any)
+  const {
+    data: chartData,
+    isLoading: chartLoading,
+    error: chartError
+  } = useSWR(
+    data && data.length > 0 && data[0].symbol ? ["chart-data", data[0].symbol] : null,
+    () => {
+      console.log("Fetching chart data for:", data[0].symbol);
+      return YahooFinanceApi.getChart(data[0].symbol);
+    },
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000
     }
   );
 
@@ -47,7 +67,15 @@ const SearchBlock = () => {
           {(!isLoading && data && data.length === 0) ? "No Results Found" : null}
           {noResults ? noResults : ""}
         </div>
-        {data && data.length > 0 ? <Stockinfo singleTicker ticker={data[0]} /> : null}
+        {data && data.length > 0 ? (
+          <Stockinfo
+            singleTicker
+            ticker={data[0]}
+            chartData={chartData}
+            chartLoading={chartLoading}
+            chartError={chartError}
+          />
+        ) : null}
       </div>
     </section>
   );

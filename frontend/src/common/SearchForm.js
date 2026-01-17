@@ -11,7 +11,7 @@ const SearchForm = ({ search }) => {
 
   function handleChange(evt) {
     const { name, value } = evt.target;
-    setFormData((data) => ({
+    setFormData(() => ({
       [name]: value.toUpperCase(),
     }));
   }

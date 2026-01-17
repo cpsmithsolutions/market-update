@@ -69,7 +69,6 @@ const Stockinfo = ({ ticker, chartData, chartLoading, chartError, singleTicker =
   async function handleRefresh() {
     if (singleTicker) { 
    refreshTickerAndChartData(ticker.symbol);
-
     } else {
    refreshWatchlistAndChartData(watchlistString, ticker.symbol);
     }

@@ -15,6 +15,7 @@ const Watchlist = () => {
   const refreshInterval = useRefreshInterval();
 
   const fetcher = async () => {
+    console.log("Fetching watchlist data for:", watchlistString);
     if (!watchlistString) return [];
     return YahooFinanceApi.searchTicker(watchlistString);
   }
