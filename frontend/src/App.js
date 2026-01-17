@@ -13,7 +13,7 @@ import ProtectedRoute from "./helpers/ProtectedRoute";
 import NewsSummary from "./news/NewsSummary";
 import { LOG_OUT, UPDATE_CURR_USER } from "./actions/types";
 import UserContext from "./common/UserContext";
-import jwt from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
 import MktSummary from "./mktSummary/MktSummary";
 import Delete from "./delete/Delete";
 
@@ -31,7 +31,7 @@ function App() {
     async function updatingCurrentUser(currentToken) {
       try {
         if (currentToken) {
-          const { username } = jwt.decode(currentToken);
+          const { username } = jwtDecode(currentToken);
           const res2 = await MarketUpdateApi.getCurrentUserData(username);
           dispatch({ type: UPDATE_CURR_USER, currentUser: res2 });
           return { success: true };

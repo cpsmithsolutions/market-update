@@ -26,10 +26,10 @@ function NavBar({ logOut }) {
         </NavLink>
         <NavbarToggler
           onClick={toggleNavbar}
-          className="mr-2 Navbar-toggler-btn"
+          className="me-2 Navbar-toggler-btn"
         />
         <Collapse isOpen={!collapsed} navbar>
-          <Nav className="ml-auto" navbar>
+          <Nav className="ms-auto" navbar>
             {Object.keys(currentUser).length ? (
               <>
                 <NavItem>

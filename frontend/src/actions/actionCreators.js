@@ -7,7 +7,7 @@ import {
 } from "./types";
 import MarketUpdateApi from "../api/MarketUpdateApi";
 import YahooFinanceApi from "../api/YahooFinanceApi";
-import { jwt } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
 
 export function addTickerToList(username, ticker) {
   return async function (dispatch) {
@@ -45,7 +45,7 @@ export function updateCurrUser(currentToken) {
   return async function (dispatch) {
     try {
       if (currentToken) {
-        const { username } = jwt.decode(currentToken);
+        const { username } = jwtDecode(currentToken);
         const res = await MarketUpdateApi.getCurrentUserData(username);
         return updatedCurrentUser(res);
       }
