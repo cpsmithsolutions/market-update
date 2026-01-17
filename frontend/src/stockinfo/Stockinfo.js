@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import useSWR from "swr";
 import "./Stockinfo.css";
 import { Button, Row, Col } from "reactstrap";
 import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
@@ -17,10 +18,9 @@ import News from "../news/News";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 import { SEARCH_TICKER_DATA } from "../actions/types";
 
-const Stockinfo = ({ ticker }) => {
+const Stockinfo = ({ ticker, chartData, chartLoading, chartError }) => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [chartData, setChartData] = useState(null);
+  // Chart data loading handled by SWR
   const currentUser = useSelector((store) => store.currentUser);
   const [collapse, setCollapse] = useState(false);
   const [collapseNews, setCollapseNews] = useState(false);
@@ -59,14 +59,6 @@ const Stockinfo = ({ ticker }) => {
   };
   const [percent, setPercent] = useState(true);
 
-  useEffect(() => {
-    async function getChartData() {
-      const chartData = await YahooFinanceApi.getChart(ticker.symbol);
-      setChartData(chartData);
-      setLoading(false);
-    }
-    getChartData();
-  }, [ticker.symbol]);
 
   function handleClick() {
     percent ? setPercent(false) : setPercent(true);
@@ -77,17 +69,14 @@ const Stockinfo = ({ ticker }) => {
   }
 
   function addToWatchlist() {
-    setLoading(true);
     dispatch(addTickerToList(currentUser.username, ticker));
     dispatch({ type: SEARCH_TICKER_DATA, tickerData: null });
     setAdded(true);
   }
 
   async function removeFromWatchlist() {
-    setLoading(true);
     await dispatch(removeTickerFromList(currentUser.username, ticker));
     dispatch({ type: SEARCH_TICKER_DATA, tickerData: null });
-    setLoading(false);
   }
 
   let percentColor;
@@ -160,12 +149,15 @@ const Stockinfo = ({ ticker }) => {
     }
   }
 
-  if (loading) {
+  if (chartLoading) {
     return (
       <div data-testid="watchlist" className="Watchlist">
         <ChaseLoading />
       </div>
     );
+  }
+  if (chartError) {
+    return <div className="Watchlist">Error loading chart data.</div>;
   }
 
   if (!collapse)
@@ -225,7 +217,7 @@ const Stockinfo = ({ ticker }) => {
           </span>
         </div>
         <div className="Stockinfo-chart">
-          <Chart chartData={chartData} />
+          {chartData ? <Chart chartData={chartData} /> : null}
         </div>
         <div>
           <div className="Stockinfo-data">

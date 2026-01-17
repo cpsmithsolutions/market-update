@@ -1,46 +1,48 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback} from "react";
+import useSWR from "swr";
+import useRefreshInterval from "../hooks/useRefreshInterval";
 import Item from "./Item";
 import "./Watchlist.css";
 import YahooFinanceApi from "../api/YahooFinanceApi";
 import SearchBlock from "../searchBlock/SearchBlock";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 
 const Watchlist = () => {
-  const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch();
   const watchlist = useSelector((store) => store.currentUser.watchlist);
+  const watchlistString = watchlist ? watchlist.join(",") : "";
 
-  const watchlistData = useSelector((store) => store.watchlistData);
+  const refreshInterval = useRefreshInterval();
 
-  let watchlistString;
-  if (watchlist) watchlistString = watchlist.join(",");
+  const fetcher = async () => {
+    if (!watchlistString) return [];
+    return YahooFinanceApi.searchTicker(watchlistString);
+  }
 
-  useEffect(() => {
-    async function getStocks(tickers) {
-      if (tickers) {
-        const res = await YahooFinanceApi.searchTicker(tickers);
-        dispatch({ type: "SET_WATCHLIST_DATA", watchlistData: res });
-      }
-
-      setLoading(false);
+  const { data: watchlistData, isLoading, error } = useSWR(
+    watchlistString ? ['watchlist', watchlistString] : null,
+     fetcher,
+    {
+      dedupingInterval: 60000,
+      refreshInterval,
     }
+  );
 
-    getStocks(watchlistString);
-  }, [watchlist, watchlistString, dispatch]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div data-testid="Watchlist" className="Watchlist">
         <ChaseLoading />
       </div>
     );
   }
+  if (error) {
+    return <div className="Watchlist">Error loading watchlist.</div>;
+  }
 
   const watchlistsArray =
-    watchlistData.map((ticker) => (
-      <Item key={ticker.symbol} ticker={ticker} />
-    )) || "No Stocks in Watchlist";
+    watchlistData && watchlistData.length > 0
+      ? watchlistData.map((ticker) => <Item key={ticker.symbol} ticker={ticker} />)
+      : [];
 
   return (
     <div className="Watchlist">

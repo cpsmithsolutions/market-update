@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useSWR from "swr";
 import "../stockinfo/Stockinfo.css";
 import { Button } from "reactstrap";
 import { addCommas } from "../helpers/abreviateLargeNums";
@@ -12,7 +13,9 @@ import {
 import { SEARCH_TICKER_DATA } from "../actions/types";
 import { useDispatch, useSelector } from "react-redux";
 import { refreshTicker } from "../actions/actionCreators";
+import YahooFinanceApi from "../api/YahooFinanceApi";
 import Stockinfo from "../stockinfo/Stockinfo";
+import useRefreshInterval from "../hooks/useRefreshInterval";
 
 const Item = ({ ticker }) => {
   const currentUser = useSelector((store) => store.currentUser);
@@ -20,8 +23,21 @@ const Item = ({ ticker }) => {
   let alreadyAdded = false;
   if (Object.keys(currentUser).length)
     alreadyAdded = currentUser.watchlist.filter((t) => t === ticker.symbol);
-  const [expand, setExpand] = useState(false);
+  const [expand, setExpand] = useState(true);
   const [added, setAdded] = useState(alreadyAdded.length !== 0);
+
+  const refreshInterval = useRefreshInterval();
+ const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
+      ticker.symbol ? ["chart-data", ticker.symbol] : null,
+      () => YahooFinanceApi.getChart(ticker.symbol),
+      {
+        dedupingInterval: 60000,
+        refreshInterval
+      }
+    );
+
+
+
   const marketChange = {
     percent: `${ticker.regularMarketChangePercent.toFixed(2)} %`,
     market: ticker.regularMarketChange.toFixed(2),
@@ -31,6 +47,8 @@ const Item = ({ ticker }) => {
   function handleClick() {
     percent ? setPercent(false) : setPercent(true);
   }
+
+
 
   function addToWatchlist() {
     dispatch(addTickerToList(currentUser.username, ticker));
@@ -126,7 +144,8 @@ const Item = ({ ticker }) => {
     );
   }
   if (expand) {
-    return <Stockinfo ticker={ticker} />;
+
+    return <Stockinfo ticker={ticker} chartData={chartData} chartLoading={chartLoading} chartError={chartError} />;
   }
 };
 
