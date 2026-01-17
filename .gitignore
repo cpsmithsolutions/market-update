@@ -2,6 +2,7 @@
 .gitignore
 .env
 build
+frontend/build
 apiKey.js
 __snapshots__
 frontend/node_modules
