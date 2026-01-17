@@ -12,7 +12,7 @@ const SearchForm = ({ search }) => {
   function handleChange(evt) {
     const { name, value } = evt.target;
     setFormData((data) => ({
-      [name]: value,
+      [name]: value.toUpperCase(),
     }));
   }
 

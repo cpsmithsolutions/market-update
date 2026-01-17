@@ -30,13 +30,13 @@ const Watchlist = () => {
 
   if (isLoading) {
     return (
-      <div data-testid="Watchlist" className="Watchlist">
+      <div data-testid="Watchlist" className="Watchlist-loading">
         <ChaseLoading />
       </div>
     );
   }
   if (error) {
-    return <div className="Watchlist">Error loading watchlist.</div>;
+    return <div className="Watchlist-error">Error loading watchlist</div>;
   }
 
   const watchlistsArray =

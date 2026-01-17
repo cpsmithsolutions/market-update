@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import useSWR from "swr";
+import {mutate} from "swr";
 import "./Stockinfo.css";
 import { Button, Row, Col } from "reactstrap";
 import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
 import YahooFinanceApi from "../api/YahooFinanceApi";
 import Item from "../watchlist/Item";
-import { refreshTicker } from "../actions/actionCreators";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -17,9 +16,12 @@ import Chart from "../chart/Chart";
 import News from "../news/News";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 import { SEARCH_TICKER_DATA } from "../actions/types";
+import { refreshWatchlistAndChartData, refreshTickerAndChartData } from "../helpers/refreshStockDataFunctions.js";
 
-const Stockinfo = ({ ticker, chartData, chartLoading, chartError }) => {
+const Stockinfo = ({ ticker, chartData, chartLoading, chartError, singleTicker = false }) => {
   const dispatch = useDispatch();
+  const watchlist = useSelector((store) => store.currentUser.watchlist);;
+  const watchlistString = watchlist ? watchlist.join(",") : "";
   // Chart data loading handled by SWR
   const currentUser = useSelector((store) => store.currentUser);
   const [collapse, setCollapse] = useState(false);
@@ -65,7 +67,13 @@ const Stockinfo = ({ ticker, chartData, chartLoading, chartError }) => {
   }
 
   async function handleRefresh() {
-    dispatch(refreshTicker(ticker.symbol));
+    if (singleTicker) { 
+   refreshTickerAndChartData(ticker.symbol);
+
+    } else {
+   refreshWatchlistAndChartData(watchlistString, ticker.symbol);
+    }
+
   }
 
   function addToWatchlist() {

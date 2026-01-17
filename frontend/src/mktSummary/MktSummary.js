@@ -7,10 +7,12 @@ import IndexItem from "./IndexItem";
 import NewsSummary from "../news/NewsSummary";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 
-const fetcher = () =>
-  YahooFinanceApi.searchTicker(
+const fetcher = () => {
+  console.log("Fetching market summary data");
+ return YahooFinanceApi.searchTicker(
     "^gspc,^dji,^ixic,^rut,^tnx,usdeur=x,gc=f,cl=f,btc-usd"
   );
+}
 
 
 const MktSummary = () => {
@@ -31,7 +33,7 @@ const MktSummary = () => {
       </div>
     );
   if (error)
-    return <div>Error loading market summary.</div>;
+    return <div className="MktSummary-error" >Error loading market summary</div>;
 
   const items = (summaryData || []).map((index) => (
     <IndexItem key={index.shortName} ticker={index} />

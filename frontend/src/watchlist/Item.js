@@ -5,6 +5,7 @@ import { Button } from "reactstrap";
 import { addCommas } from "../helpers/abreviateLargeNums";
 import "../stockinfo/Stockinfo.css";
 import "./Item.css";
+import { refreshWatchlistAndChartData } from "../helpers/refreshStockDataFunctions";
 
 import {
   removeTickerFromList,
@@ -12,13 +13,14 @@ import {
 } from "../actions/actionCreators";
 import { SEARCH_TICKER_DATA } from "../actions/types";
 import { useDispatch, useSelector } from "react-redux";
-import { refreshTicker } from "../actions/actionCreators";
 import YahooFinanceApi from "../api/YahooFinanceApi";
 import Stockinfo from "../stockinfo/Stockinfo";
 import useRefreshInterval from "../hooks/useRefreshInterval";
 
 const Item = ({ ticker }) => {
   const currentUser = useSelector((store) => store.currentUser);
+  const watchlist = useSelector((store) => store.currentUser.watchlist);
+  const watchlistString = watchlist ? watchlist.join(",") : "";
   const dispatch = useDispatch();
   let alreadyAdded = false;
   if (Object.keys(currentUser).length)
@@ -65,9 +67,6 @@ const Item = ({ ticker }) => {
     else setExpand(false);
   }
 
-  function refresh() {
-    dispatch(refreshTicker(ticker.symbol));
-  }
 
   let percentColor;
   marketChange.market >= 0
@@ -118,7 +117,7 @@ const Item = ({ ticker }) => {
           <span>
             <span
               title="Current stock price, click to refresh"
-              onClick={refresh}
+              onClick={() => refreshWatchlistAndChartData(watchlistString, ticker.symbol)}
               className="Stockinfo-price"
             >
               {marketPrice}

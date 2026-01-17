@@ -24,7 +24,7 @@ const News = ({ ticker }) => {
     return <div className="News">No News</div>;
   }
 
-  const articles = data.map((article) => (
+  const articles = (Array.isArray(data) ? data : []).map((article) => (
     <Article key={article.url} data={article} />
   ));
 

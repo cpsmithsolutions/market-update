@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../stockinfo/Stockinfo.css";
 import { Row, Col } from "reactstrap";
+import { mutate } from "swr";
 import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
 import YahooFinanceApi from "../api/YahooFinanceApi";
-import { refreshTicker } from "../actions/actionCreators";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import IndexItem from "./IndexItem";
@@ -11,14 +11,14 @@ import { useDispatch } from "react-redux";
 import Chart from "../chart/Chart";
 import News from "../news/News";
 import ChaseLoading from "../chaseloading/ChaseLoading";
+import { refreshMarketSummaryAndChartData } from "../helpers/refreshStockDataFunctions";
+
 import "./IndexInfo.css";
 
-const IndexInfo = ({ ticker }) => {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [chartData, setChartData] = useState(null);
+const IndexInfo = ({ ticker, chartData, chartLoading, chartError }) => {
+  // chartData, chartLoading, chartError are now passed as props from IndexItem
   const [collapse, setCollapse] = useState(false);
-  const [collapseNews, setCollapseNews] = useState(true);
+  const [collapseNews, setCollapseNews] = useState(false);
   const marketChangePercent = ticker.regularMarketChangePercent
     ? ticker.regularMarketChangePercent.toFixed(2)
     : "N/A";
@@ -31,21 +31,10 @@ const IndexInfo = ({ ticker }) => {
   };
   const [percent, setPercent] = useState(true);
 
-  useEffect(() => {
-    async function getChartData() {
-      const chartData = await YahooFinanceApi.getChart(ticker.symbol);
-      setChartData(chartData);
-      setLoading(false);
-    }
-    getChartData();
-  }, [ticker.symbol]);
+
 
   function handleClick() {
     percent ? setPercent(false) : setPercent(true);
-  }
-
-  async function handleRefresh() {
-    dispatch(refreshTicker(ticker.symbol));
   }
 
   const open = ticker.regularMarketOpen
@@ -117,12 +106,15 @@ const IndexInfo = ({ ticker }) => {
     }
   }
 
-  if (loading) {
+  if (chartLoading) {
     return (
       <div className="Watchlist">
         <ChaseLoading />
       </div>
     );
+  }
+  if (chartError) {
+    return <div className="Watchlist">Error loading chart data.</div>;
   }
 
   if (!collapse)
@@ -142,7 +134,7 @@ const IndexInfo = ({ ticker }) => {
 
           <span
             title="Current stock price, click to refresh"
-            onClick={handleRefresh}
+            onClick={() => refreshMarketSummaryAndChartData(ticker.symbol)}
             className="Stockinfo-price"
           >
             {marketPrice}
@@ -166,7 +158,7 @@ const IndexInfo = ({ ticker }) => {
           </span>
         </div>
         <div className="Stockinfo-chart">
-          <Chart chartData={chartData} />
+      {chartData ? <Chart chartData={chartData} /> : null}
         </div>
         <div>
           <div className="Stockinfo-data">

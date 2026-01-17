@@ -6,7 +6,6 @@ import {
   REFRESH_TICKER,
 } from "./types";
 import MarketUpdateApi from "../api/MarketUpdateApi";
-import YahooFinanceApi from "../api/YahooFinanceApi";
 import { jwtDecode } from "jwt-decode";
 
 export function addTickerToList(username, ticker) {
@@ -14,17 +13,6 @@ export function addTickerToList(username, ticker) {
     try {
       await MarketUpdateApi.addTickerToWatchlist(username, ticker.symbol);
       return dispatch(addTicker(ticker));
-    } catch (e) {
-      dispatch(gotError());
-    }
-  };
-}
-
-export function refreshTicker(ticker) {
-  return async function (dispatch) {
-    try {
-      const res = await YahooFinanceApi.searchTicker(ticker);
-      return dispatch(updateTickerData(res[0]));
     } catch (e) {
       dispatch(gotError());
     }

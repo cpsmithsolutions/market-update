@@ -11,3 +11,5 @@ export default function useRefreshInterval() {
     isUSMarketOpen() ? REFRESH_INTERVAL_OPEN : REFRESH_INTERVAL_CLOSED
   ), []);
 }
+
+

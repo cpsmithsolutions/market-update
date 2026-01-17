@@ -19,7 +19,7 @@ const NewsSummary = ({ numberOfArticles }) => {
       </div>
     );
   if (error)
-    return <div>Error loading news summary.</div>;
+    return <div className="NewsSummary-error">Error loading news summary</div>;
 
   const newsArray = (data || [])
     .slice(0, numberOfArticles)
