@@ -8,7 +8,7 @@ YahooFinance Api only accepts ticker symbols, so searching by company name will 
 
 
 **Front End Tech Stack**
-(React, Redux)
+(React, Redux, useSWR, Bootstrap)
 
 **Back End Tech Stack**
 
