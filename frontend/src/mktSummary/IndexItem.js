@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { addCommas } from "../helpers/abreviateLargeNums";
 import IndexInfo from "./IndexInfo";
 import "../stockinfo/Stockinfo.css";

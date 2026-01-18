@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import {mutate} from "swr";
 import "./Stockinfo.css";
 import { Button, Row, Col } from "reactstrap";
 import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
-import YahooFinanceApi from "../api/YahooFinanceApi";
 import Item from "../watchlist/Item";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";

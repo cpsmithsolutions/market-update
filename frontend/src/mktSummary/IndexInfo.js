@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import "../stockinfo/Stockinfo.css";
 import { Row, Col } from "reactstrap";
-import { mutate } from "swr";
 import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
-import YahooFinanceApi from "../api/YahooFinanceApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import IndexItem from "./IndexItem";
-import { useDispatch } from "react-redux";
 import Chart from "../chart/Chart";
 import News from "../news/News";
 import ChaseLoading from "../chaseloading/ChaseLoading";

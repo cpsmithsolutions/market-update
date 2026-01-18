@@ -3,7 +3,6 @@ import {
   ADD_TICKER,
   REMOVE_TICKER,
   UPDATE_CURR_USER,
-  REFRESH_TICKER,
 } from "./types";
 import MarketUpdateApi from "../api/MarketUpdateApi";
 import { jwtDecode } from "jwt-decode";
@@ -52,9 +51,6 @@ function removeTicker(ticker) {
 
 function updatedCurrentUser(currentUser) {
   return { type: UPDATE_CURR_USER, currentUser };
-}
-function updateTickerData(ticker) {
-  return { type: REFRESH_TICKER, ticker };
 }
 
 function gotError() {
