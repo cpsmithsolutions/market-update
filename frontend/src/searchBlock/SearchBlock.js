@@ -1,45 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import useSWR from "swr";
 import "./SearchBlock.css";
 import SearchForm from "../common/SearchForm";
 import YahooFinanceApi from "../api/YahooFinanceApi";
 import Stockinfo from "../stockinfo/Stockinfo";
 import ChaseLoading from "../chaseloading/ChaseLoading";
-import { SEARCH_TICKER_DATA } from "../actions/types";
-import { useDispatch, useSelector } from "react-redux";
 
 const SearchBlock = () => {
-  const dispatch = useDispatch();
-  const tickerData = useSelector((store) => store.searchTickerData);
-  const [loading, setLoading] = useState(false);
+  const [searchTicker, setSearchTicker] = useState("");
   const [noResults, setNoResults] = useState("");
 
-  useEffect(() => {
-    dispatch({ type: SEARCH_TICKER_DATA, tickerData: null });
-  }, [dispatch]);
 
-  async function search(ticker) {
-    dispatch({ type: SEARCH_TICKER_DATA, tickerData: null });
-    setNoResults(null);
-    setLoading(true);
-    let timer;
-
-    function timeOut() {
-      timer = setTimeout(() => {
-        setNoResults("Search Timed Out, Try Again");
-        setLoading(false);
-        return;
-      }, 5000);
+  const { data, isLoading, error } = useSWR(
+    searchTicker ? ["search-ticker", searchTicker] : null,
+    async () => {
+      const response = await YahooFinanceApi.searchTicker(searchTicker);
+      return response;
+    },
+    {
+      revalidateOnFocus: false,
     }
-    timeOut();
-    const response = await YahooFinanceApi.searchTicker(ticker);
-    setLoading(false);
+  );
 
-    if (response.length === 0) {
-      setNoResults("No Results Found");
-    } else {
-      dispatch({ type: SEARCH_TICKER_DATA, tickerData: response[0] });
+  // Fetch chart data for the found ticker (if any)
+  const {
+    data: chartData,
+    isLoading: chartLoading,
+    error: chartError
+  } = useSWR(
+    data && data.length > 0 && data[0].symbol ? ["chart-data", data[0].symbol] : null,
+    () => {
+      return YahooFinanceApi.getChart(data[0].symbol);
+    },
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000
     }
-    clearTimeout(timer);
+  );
+
+  function search(ticker) {
+    setNoResults("");
+    setSearchTicker(ticker);
   }
 
   return (
@@ -49,20 +50,28 @@ const SearchBlock = () => {
           <SearchForm search={search} />
         </div>
         <div className="results">
-          {loading ? (
+          {isLoading ? (
             <div>
               <ChaseLoading />
               <br />
               <br />
             </div>
-          ) : (
-            ""
-          )}
+          ) : null}
         </div>
         <div className="SearchBlock-no-results">
+          {error ? "Error fetching data" : null}
+          {(!isLoading && data && data.length === 0) ? "No Results Found" : null}
           {noResults ? noResults : ""}
         </div>
-        {tickerData ? <Stockinfo ticker={tickerData} /> : ""}
+        {data && data.length > 0 ? (
+          <Stockinfo
+            singleTicker
+            ticker={data[0]}
+            chartData={chartData}
+            chartLoading={chartLoading}
+            chartError={chartError}
+          />
+        ) : null}
       </div>
     </section>
   );

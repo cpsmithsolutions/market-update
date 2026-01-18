@@ -5,14 +5,12 @@ import {
   LOG_OUT,
   SIGN_UP,
   UPDATE_PROFILE,
-  REFRESH_TICKER,
-  SET_WATCHLIST_DATA,
   SEARCH_TICKER_DATA,
 } from "../actions/types";
 
 const DEFAULT_STATE = {
   currentUser: {},
-  watchlistData: [],
+  watchlist: [],
   searchTickerData: null,
 };
 
@@ -26,10 +24,7 @@ function rootReducer(state = DEFAULT_STATE, action) {
           watchlist: state.currentUser.watchlist.filter(
             (t) => t !== action.ticker.symbol
           ),
-        },
-        watchlistData: state.watchlistData.filter(
-          (t) => t.symbol !== action.ticker.symbol
-        ),
+        }
       };
     case SEARCH_TICKER_DATA:
       return {
@@ -43,8 +38,7 @@ function rootReducer(state = DEFAULT_STATE, action) {
         currentUser: {
           ...state.currentUser,
           watchlist: [...state.currentUser.watchlist, action.ticker.symbol],
-        },
-        watchlistData: [...state.watchlistData, action.ticker],
+        }
       };
 
     case UPDATE_CURR_USER:
@@ -63,30 +57,13 @@ function rootReducer(state = DEFAULT_STATE, action) {
       return {
         ...state,
         currentUser: {},
-        watchlistData: [],
+        watchlist: [],
       };
 
     case SIGN_UP:
       return {
         ...state,
         currentUser: { ...action.currentUser },
-      };
-
-    case SET_WATCHLIST_DATA:
-      return {
-        ...state,
-        watchlistData: [...action.watchlistData],
-      };
-
-    case REFRESH_TICKER:
-      return {
-        ...state,
-        watchlistData: [
-          ...state.watchlistData.map((t) => {
-            if (t.symbol === action.ticker.symbol) return action.ticker;
-            else return t;
-          }),
-        ],
       };
     default:
       return state;

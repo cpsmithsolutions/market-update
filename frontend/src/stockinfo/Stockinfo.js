@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Stockinfo.css";
 import { Button, Row, Col } from "reactstrap";
 import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
-import YahooFinanceApi from "../api/YahooFinanceApi";
 import Item from "../watchlist/Item";
-import { refreshTicker } from "../actions/actionCreators";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -16,11 +14,13 @@ import Chart from "../chart/Chart";
 import News from "../news/News";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 import { SEARCH_TICKER_DATA } from "../actions/types";
+import { refreshWatchlistAndChartData, refreshTickerAndChartData } from "../helpers/refreshStockDataFunctions.js";
 
-const Stockinfo = ({ ticker }) => {
+const Stockinfo = ({ ticker, chartData, chartLoading, chartError, singleTicker = false }) => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [chartData, setChartData] = useState(null);
+  const watchlist = useSelector((store) => store.currentUser.watchlist);;
+  const watchlistString = watchlist ? watchlist.join(",") : "";
+  // Chart data loading handled by SWR
   const currentUser = useSelector((store) => store.currentUser);
   const [collapse, setCollapse] = useState(false);
   const [collapseNews, setCollapseNews] = useState(false);
@@ -59,35 +59,29 @@ const Stockinfo = ({ ticker }) => {
   };
   const [percent, setPercent] = useState(true);
 
-  useEffect(() => {
-    async function getChartData() {
-      const chartData = await YahooFinanceApi.getChart(ticker.symbol);
-      setChartData(chartData);
-      setLoading(false);
-    }
-    getChartData();
-  }, [ticker.symbol]);
 
   function handleClick() {
     percent ? setPercent(false) : setPercent(true);
   }
 
   async function handleRefresh() {
-    dispatch(refreshTicker(ticker.symbol));
+    if (singleTicker) { 
+   refreshTickerAndChartData(ticker.symbol);
+    } else {
+   refreshWatchlistAndChartData(watchlistString, ticker.symbol);
+    }
+
   }
 
   function addToWatchlist() {
-    setLoading(true);
     dispatch(addTickerToList(currentUser.username, ticker));
     dispatch({ type: SEARCH_TICKER_DATA, tickerData: null });
     setAdded(true);
   }
 
   async function removeFromWatchlist() {
-    setLoading(true);
     await dispatch(removeTickerFromList(currentUser.username, ticker));
     dispatch({ type: SEARCH_TICKER_DATA, tickerData: null });
-    setLoading(false);
   }
 
   let percentColor;
@@ -160,12 +154,15 @@ const Stockinfo = ({ ticker }) => {
     }
   }
 
-  if (loading) {
+  if (chartLoading) {
     return (
       <div data-testid="watchlist" className="Watchlist">
         <ChaseLoading />
       </div>
     );
+  }
+  if (chartError) {
+    return <div className="Watchlist">Error loading chart data.</div>;
   }
 
   if (!collapse)
@@ -225,7 +222,7 @@ const Stockinfo = ({ ticker }) => {
           </span>
         </div>
         <div className="Stockinfo-chart">
-          <Chart chartData={chartData} />
+          {chartData ? <Chart chartData={chartData} /> : null}
         </div>
         <div>
           <div className="Stockinfo-data">

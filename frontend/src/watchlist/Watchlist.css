@@ -3,6 +3,15 @@
   background-color: black;
   height: 100vh;
 }
+.Watchlist-loading {
+  background-color: black;
+  height: 100vh;
+}
+.Watchlist-error {
+  background-color: black;
+  padding: 20px;
+  color: white;
+}
 .Watchlist-title {
   background-color: black;
   color: rgb(200, 210, 236);

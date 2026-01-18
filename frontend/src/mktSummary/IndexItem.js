@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import useSWR from "swr";
 import { addCommas } from "../helpers/abreviateLargeNums";
-import Indexinfo from "./IndexInfo";
-import { useDispatch } from "react-redux";
-import { refreshTicker } from "../actions/actionCreators";
+import IndexInfo from "./IndexInfo";
 import "../stockinfo/Stockinfo.css";
 import "../watchlist/Item.css";
 import "./IndexItem.css";
+import YahooFinanceApi from "../api/YahooFinanceApi";
+import useRefreshInterval from "../hooks/useRefreshInterval";
+import { refreshMarketSummaryAndChartData } from "../helpers/refreshStockDataFunctions";
 
 const IndexItem = ({ ticker }) => {
-  const dispatch = useDispatch();
   const [expand, setExpand] = useState(false);
   const marketChange = {
     percent: `${ticker.regularMarketChangePercent.toFixed(2)} %`,
@@ -20,9 +21,20 @@ const IndexItem = ({ ticker }) => {
     percent ? setPercent(false) : setPercent(true);
   }
 
-  function refresh() {
-    dispatch(refreshTicker(ticker.symbol));
-  }
+  const refreshInterval = useRefreshInterval();
+    const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
+      ticker.symbol ? ["index-chart-data", ticker.symbol] : null,
+        () => {
+          return YahooFinanceApi.getChart(ticker.symbol)
+        },
+      {
+        dedupingInterval: 60000,
+        refreshInterval
+      }
+    );
+  
+
+
 
   function handleExpand() {
     if (expand) setExpand(false);
@@ -51,7 +63,7 @@ const IndexItem = ({ ticker }) => {
           <span>
             <span
               title="Current stock price, click to refresh"
-              onClick={refresh}
+              onClick={() => refreshMarketSummaryAndChartData(ticker.symbol)}
               className="Stockinfo-price"
             >
               {marketPrice}
@@ -69,7 +81,8 @@ const IndexItem = ({ ticker }) => {
     );
   }
   if (expand) {
-    return <Indexinfo ticker={ticker} />;
+  
+      return <IndexInfo ticker={ticker} chartData={chartData} chartLoading={chartLoading} chartError={chartError} />;
   }
 };
 

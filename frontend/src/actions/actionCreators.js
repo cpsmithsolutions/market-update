@@ -3,28 +3,15 @@ import {
   ADD_TICKER,
   REMOVE_TICKER,
   UPDATE_CURR_USER,
-  REFRESH_TICKER,
 } from "./types";
 import MarketUpdateApi from "../api/MarketUpdateApi";
-import YahooFinanceApi from "../api/YahooFinanceApi";
-import { jwt } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
 
 export function addTickerToList(username, ticker) {
   return async function (dispatch) {
     try {
       await MarketUpdateApi.addTickerToWatchlist(username, ticker.symbol);
       return dispatch(addTicker(ticker));
-    } catch (e) {
-      dispatch(gotError());
-    }
-  };
-}
-
-export function refreshTicker(ticker) {
-  return async function (dispatch) {
-    try {
-      const res = await YahooFinanceApi.searchTicker(ticker);
-      return dispatch(updateTickerData(res[0]));
     } catch (e) {
       dispatch(gotError());
     }
@@ -45,7 +32,7 @@ export function updateCurrUser(currentToken) {
   return async function (dispatch) {
     try {
       if (currentToken) {
-        const { username } = jwt.decode(currentToken);
+        const { username } = jwtDecode(currentToken);
         const res = await MarketUpdateApi.getCurrentUserData(username);
         return updatedCurrentUser(res);
       }
@@ -64,9 +51,6 @@ function removeTicker(ticker) {
 
 function updatedCurrentUser(currentUser) {
   return { type: UPDATE_CURR_USER, currentUser };
-}
-function updateTickerData(ticker) {
-  return { type: REFRESH_TICKER, ticker };
 }
 
 function gotError() {

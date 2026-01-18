@@ -5,6 +5,11 @@
   background-color: black;
   height: 100vh;
 }
+.NewsSummary-error {
+  background-color: black;
+  padding: 20px;
+  color: white;
+}
 
 .NewsSummary {
   text-align: left;

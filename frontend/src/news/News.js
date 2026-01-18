@@ -1,37 +1,30 @@
-import React, { useEffect, useState } from "react";
+import useSWR from "swr";
 import Article from "./Article";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 import FinnhubFinanceApi from "../api/FinnhubFinanceApi";
 
+const fetcher = (ticker) => FinnhubFinanceApi.getStockNews(ticker);
+
 const News = ({ ticker }) => {
-  const [stockNews, setStockNews] = useState(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function getNews(ticker) {
-      const res = await FinnhubFinanceApi.getStockNews(ticker);
-      if (res) {
-            setStockNews(res);
-      }
-      setLoading(false);
-    }
+  const { data, error, isLoading } = useSWR(["stock-news", ticker], () => fetcher(ticker), {
+    dedupingInterval: 60000,
+  });
 
-    getNews(ticker);
-  }, [ticker]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="Watchlist">
         <ChaseLoading />
       </div>
     );
   }
-
-
-  if (stockNews.length === 0) {
+  if (error) {
+    return <div className="News">Error loading news.</div>;
+  }
+  if (!data || data.length === 0) {
     return <div className="News">No News</div>;
   }
 
-  const articles = stockNews.map((article) => (
+  const articles = (Array.isArray(data) ? data : []).map((article) => (
     <Article key={article.url} data={article} />
   ));
 

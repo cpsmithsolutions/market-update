@@ -11,8 +11,8 @@ const SearchForm = ({ search }) => {
 
   function handleChange(evt) {
     const { name, value } = evt.target;
-    setFormData((data) => ({
-      [name]: value,
+    setFormData(() => ({
+      [name]: value.toUpperCase(),
     }));
   }
 
@@ -25,7 +25,7 @@ const SearchForm = ({ search }) => {
 
   return (
     <div className="SearchForm">
-      <form className="SearchForm-form form-inline" onSubmit={handleSubmit}>
+      <form className="SearchForm-form d-flex" onSubmit={handleSubmit}>
         <input
           className="SearchForm-input"
           type="text"
