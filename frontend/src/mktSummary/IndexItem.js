@@ -21,21 +21,6 @@ const IndexItem = ({ ticker }) => {
     percent ? setPercent(false) : setPercent(true);
   }
 
-  const refreshInterval = useRefreshInterval();
-    const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
-      ticker.symbol ? ["index-chart-data", ticker.symbol] : null,
-        () => {
-          return YahooFinanceApi.getChart(ticker.symbol)
-        },
-      {
-        dedupingInterval: 60000,
-        refreshInterval
-      }
-    );
-  
-
-
-
   function handleExpand() {
     if (expand) setExpand(false);
     else setExpand(true);
@@ -82,7 +67,7 @@ const IndexItem = ({ ticker }) => {
   }
   if (expand) {
   
-      return <IndexInfo ticker={ticker} chartData={chartData} chartLoading={chartLoading} chartError={chartError} />;
+      return <IndexInfo ticker={ticker}/>;
   }
 };
 

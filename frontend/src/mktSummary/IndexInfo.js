@@ -9,13 +9,30 @@ import Chart from "../chart/Chart";
 import News from "../news/News";
 import ChaseLoading from "../chaseloading/ChaseLoading";
 import { refreshMarketSummaryAndChartData } from "../helpers/refreshStockDataFunctions";
-
+import YahooFinanceApi from "../api/YahooFinanceApi";
+import useSWR from "swr";
 import "./IndexInfo.css";
+import useRefreshInterval from "../hooks/useRefreshInterval";
 
-const IndexInfo = ({ ticker, chartData, chartLoading, chartError }) => {
+const IndexInfo = ({ ticker}) => {
   // chartData, chartLoading, chartError are now passed as props from IndexItem
   const [collapse, setCollapse] = useState(false);
   const [collapseNews, setCollapseNews] = useState(false);
+
+  const refreshInterval = useRefreshInterval();
+    const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
+      ticker.symbol ? ["index-chart-data", ticker.symbol] : null,
+        () => {
+          return YahooFinanceApi.getChart(ticker.symbol)
+        },
+      {
+        dedupingInterval: 60000,
+        refreshInterval
+      }
+    );
+  
+
+
   const marketChangePercent = ticker.regularMarketChangePercent
     ? ticker.regularMarketChangePercent.toFixed(2)
     : "N/A";
