@@ -4,108 +4,80 @@ import { Row, Col } from "reactstrap";
 import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
-import IndexItem from "./IndexItem";
-import Chart from "../chart/Chart";
-import News from "../news/News";
-import ChaseLoading from "../chaseloading/ChaseLoading";
-import { refreshMarketSummaryAndChartData } from "../helpers/refreshStockDataFunctions";
-import YahooFinanceApi from "../api/YahooFinanceApi";
-import useSWR from "swr";
+import IndexItem from './IndexItem';
+import News from '../news/News';
+import { refreshMarketSummaryAndChartData } from '../helpers/refreshStockDataFunctions';
 import "./IndexInfo.css";
-import useRefreshInterval from "../hooks/useRefreshInterval";
+import ChartParent from '../chart/ChartParent';
 
 const IndexInfo = ({ ticker}) => {
   // chartData, chartLoading, chartError are now passed as props from IndexItem
   const [collapse, setCollapse] = useState(false);
   const [collapseNews, setCollapseNews] = useState(false);
+  const [percent, setPercent] = useState(true);
 
-  const refreshInterval = useRefreshInterval();
-    const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
-      ticker.symbol ? ["index-chart-data", ticker.symbol] : null,
-        () => {
-          return YahooFinanceApi.getChart(ticker.symbol)
-        },
-      {
-        dedupingInterval: 60000,
-        refreshInterval
-      }
-    );
-  
-
+  console.log('IndexInfo REERENDER', ticker.symbol);
 
   const marketChangePercent = ticker.regularMarketChangePercent
     ? ticker.regularMarketChangePercent.toFixed(2)
-    : "N/A";
+    : 'N/A';
   const marketChangeAmt = ticker.regularMarketChange
     ? ticker.regularMarketChange.toFixed(2)
-    : "N/A";
+    : 'N/A';
   const marketChange = {
     percent: `${marketChangePercent} %`,
     market: marketChangeAmt,
   };
-  const [percent, setPercent] = useState(true);
-
-
 
   function handleClick() {
     percent ? setPercent(false) : setPercent(true);
   }
 
-  const open = ticker.regularMarketOpen
-    ? addCommas(ticker.regularMarketOpen.toFixed(2))
-    : "N/A";
+  const open = ticker.regularMarketOpen ? addCommas(ticker.regularMarketOpen.toFixed(2)) : 'N/A';
   const high = ticker.regularMarketDayHigh
     ? addCommas(ticker.regularMarketDayHigh.toFixed(2))
-    : "N/A";
-  const low = ticker.regularMarketDayLow
-    ? addCommas(ticker.regularMarketDayLow.toFixed(2))
-    : "N/A";
+    : 'N/A';
+  const low = ticker.regularMarketDayLow ? addCommas(ticker.regularMarketDayLow.toFixed(2)) : 'N/A';
   const fiftyTwoWeekHigh = ticker.fiftyTwoWeekHigh
     ? addCommas(ticker.fiftyTwoWeekHigh.toFixed(2))
-    : "N/A";
+    : 'N/A';
   const fiftyTwoWeekLow = ticker.fiftyTwoWeekLow
     ? addCommas(ticker.fiftyTwoWeekLow.toFixed(2))
-    : "N/A";
+    : 'N/A';
   let percentColor;
 
-  marketChange.market >= 0
-    ? (percentColor = "LimeGreen")
-    : (percentColor = "red");
+  marketChange.market >= 0 ? (percentColor = 'LimeGreen') : (percentColor = 'red');
 
   const marketPrice = ticker.regularMarketPrice
     ? addCommas(ticker.regularMarketPrice.toFixed(2))
-    : "N/A";
+    : 'N/A';
 
-  const mktCap = ticker.marketCap
-    ? `$${abreviateLargeNums(ticker.marketCap)}`
-    : "N/A";
+  const mktCap = ticker.marketCap ? `$${abreviateLargeNums(ticker.marketCap)}` : 'N/A';
 
   const mktVol = ticker.regularMarketVolume
     ? abreviateLargeNums(ticker.regularMarketVolume)
-    : "N/A";
+    : 'N/A';
 
   let percentOffHigh = (
-    ((ticker.fiftyTwoWeekHigh - ticker.regularMarketPrice) /
-      ticker.fiftyTwoWeekHigh) *
+    ((ticker.fiftyTwoWeekHigh - ticker.regularMarketPrice) / ticker.fiftyTwoWeekHigh) *
     100
   ).toFixed(2);
 
   const stringOffHigh = percentOffHigh ? (
-    <span style={{ color: "red" }}>{`-${percentOffHigh} %`}</span>
+    <span className="IndexInfo-red">{`-${percentOffHigh} %`}</span>
   ) : (
-    <span style={{ color: "LimeGreen" }}>52 Week High</span>
+    <span className="IndexInfo-lime-green">52 Week High</span>
   );
 
   let percentAboveLow = (
-    ((ticker.regularMarketPrice - ticker.fiftyTwoWeekLow) /
-      ticker.regularMarketPrice) *
+    ((ticker.regularMarketPrice - ticker.fiftyTwoWeekLow) / ticker.regularMarketPrice) *
     100
   ).toFixed(2);
 
   const stringAboveLow = percentAboveLow ? (
-    <span style={{ color: "limeGreen" }}>{`${percentAboveLow} %`}</span>
+    <span className="IndexInfo-lime-green">{`${percentAboveLow} %`}</span>
   ) : (
-    <span style={{ color: "red" }}>52 Week Low</span>
+    <span className="IndexInfo-red">52 Week Low</span>
   );
 
   function handleCollapse() {
@@ -120,26 +92,11 @@ const IndexInfo = ({ ticker}) => {
     }
   }
 
-  if (chartLoading) {
-    return (
-      <div className="Watchlist">
-        <ChaseLoading />
-      </div>
-    );
-  }
-  if (chartError) {
-    return <div className="Watchlist">Error loading chart data.</div>;
-  }
-
   if (!collapse)
     return (
       <div className="Stockinfo">
         <h4 className="IndexInfo-name">
-          <span
-            className="IndexInfo-name-clickable"
-            title="Collapse"
-            onClick={handleCollapse}
-          >
+          <span className="IndexInfo-name-clickable" title="Collapse" onClick={handleCollapse}>
             {ticker.shortName}
             {/* <span className="Stockinfo-info-icon">
               <FontAwesomeIcon icon={faInfo} />
@@ -161,7 +118,7 @@ const IndexInfo = ({ ticker}) => {
           <span className="exchange">{ticker.fullExchangeName} </span>
           {ticker.symbol}
           <span>
-            {" "}
+            {' '}
             <button
               onClick={handleClick}
               className="Stockinfo-daily-change"
@@ -172,7 +129,7 @@ const IndexInfo = ({ ticker}) => {
           </span>
         </div>
         <div className="Stockinfo-chart">
-      {chartData ? <Chart chartData={chartData} /> : null}
+          <ChartParent tickerSymbol={ticker.symbol} />
         </div>
         <div>
           <div className="Stockinfo-data">
@@ -267,21 +224,7 @@ const IndexInfo = ({ ticker}) => {
               </Col>
             </Row>
           </div>
-          <div className="News">
-            <h3
-              className="Stockinfo-news-title"
-              title={collapseNews ? "Expand" : "Collapse"}
-              onClick={handleCollapseNews}
-            >
-              News
-              {/* <span className="Stockinfo-info-icon">
-                <FontAwesomeIcon icon={faInfo} />
-              </span> */}
-            </h3>
-            {collapseNews ? "" : <News ticker={ticker.symbol} />}
-          </div>
         </div>
-        {}
       </div>
     );
   else return <IndexItem ticker={ticker} />;

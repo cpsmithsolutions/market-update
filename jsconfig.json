@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "baseUrl": "./frontend/src",
+    "paths": {
+      "@/*": ["*"],
+      "components/*": ["components/*"]
+    },
+    "jsx": "react",
+    "checkJs": true,
+    "allowJs": true
+  },
+  "include": ["frontend/src/**/*"],
+  "exclude": ["node_modules", "build", "public"]
+}

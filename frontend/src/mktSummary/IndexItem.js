@@ -26,6 +26,8 @@ const IndexItem = ({ ticker }) => {
     else setExpand(true);
   }
 
+  console.log("IndexItem REERENDER", ticker.symbol);
+
   let percentColor;
   marketChange.market >= 0
     ? (percentColor = "LimeGreen")

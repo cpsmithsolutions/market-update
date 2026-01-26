@@ -7,6 +7,14 @@
   cursor: pointer;
 }
 
+/* Added for color styling from inline styles */
+.IndexInfo-lime-green {
+  color: LimeGreen;
+}
+.IndexInfo-red {
+  color: red;
+}
+
 @media only screen and (max-width: 414px) {
   .Indexinfo-description {
     margin-top: -7px;
