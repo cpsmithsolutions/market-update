@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import useSWR from "swr";
 import { addCommas } from "../helpers/abreviateLargeNums";
 import IndexInfo from "./IndexInfo";
 import "../stockinfo/Stockinfo.css";
 import "../watchlist/Item.css";
 import "./IndexItem.css";
-import YahooFinanceApi from "../api/YahooFinanceApi";
-import useRefreshInterval from "../hooks/useRefreshInterval";
 import { refreshMarketSummaryAndChartData } from "../helpers/refreshStockDataFunctions";
 
 const IndexItem = ({ ticker }) => {
@@ -25,8 +22,6 @@ const IndexItem = ({ ticker }) => {
     if (expand) setExpand(false);
     else setExpand(true);
   }
-
-  console.log("IndexItem REERENDER", ticker.symbol);
 
   let percentColor;
   marketChange.market >= 0

@@ -11,11 +11,9 @@ const News = React.memo(({ ticker }) => {
     dedupingInterval: 60000,
   });
 
-  console.log({ data });
-
   if (isLoading) {
     return (
-      <div className="Watchlist">
+      <div className="">
         <ChaseLoading />
       </div>
     );

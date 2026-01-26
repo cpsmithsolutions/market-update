@@ -5,18 +5,14 @@ import { abreviateLargeNums, addCommas } from "../helpers/abreviateLargeNums";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import IndexItem from './IndexItem';
-import News from '../news/News';
 import { refreshMarketSummaryAndChartData } from '../helpers/refreshStockDataFunctions';
 import "./IndexInfo.css";
 import ChartParent from '../chart/ChartParent';
 
 const IndexInfo = ({ ticker}) => {
-  // chartData, chartLoading, chartError are now passed as props from IndexItem
   const [collapse, setCollapse] = useState(false);
-  const [collapseNews, setCollapseNews] = useState(false);
   const [percent, setPercent] = useState(true);
 
-  console.log('IndexInfo REERENDER', ticker.symbol);
 
   const marketChangePercent = ticker.regularMarketChangePercent
     ? ticker.regularMarketChangePercent.toFixed(2)
@@ -84,23 +80,12 @@ const IndexInfo = ({ ticker}) => {
     setCollapse(true);
   }
 
-  function handleCollapseNews() {
-    if (collapseNews) {
-      setCollapseNews(false);
-    } else {
-      setCollapseNews(true);
-    }
-  }
-
   if (!collapse)
     return (
       <div className="Stockinfo">
         <h4 className="IndexInfo-name">
           <span className="IndexInfo-name-clickable" title="Collapse" onClick={handleCollapse}>
             {ticker.shortName}
-            {/* <span className="Stockinfo-info-icon">
-              <FontAwesomeIcon icon={faInfo} />
-            </span> */}
           </span>
 
           <span
@@ -109,16 +94,12 @@ const IndexInfo = ({ ticker}) => {
             className="Stockinfo-price"
           >
             {marketPrice}
-            {/* <span className="Stockinfo-info-icon">
-              <FontAwesomeIcon icon={faInfo} />
-            </span> */}
           </span>
         </h4>
         <div className="Indexinfo-description">
           <span className="exchange">{ticker.fullExchangeName} </span>
           {ticker.symbol}
           <span>
-            {' '}
             <button
               onClick={handleClick}
               className="Stockinfo-daily-change"

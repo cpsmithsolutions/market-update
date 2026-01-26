@@ -28,20 +28,6 @@ const Item = ({ ticker }) => {
   const [expand, setExpand] = useState(false);
   const [added, setAdded] = useState(alreadyAdded.length !== 0);
 
-  const refreshInterval = useRefreshInterval();
- const { data: chartData, isLoading: chartLoading, error: chartError } = useSWR(
-      ticker.symbol ? ["chart-data", ticker.symbol] : null,
-   () => {
-     return YahooFinanceApi.getChart(ticker.symbol)
-   },
-      {
-        dedupingInterval: 60000,
-        refreshInterval
-      }
-    );
-
-
-
   const marketChange = {
     percent: `${ticker.regularMarketChangePercent.toFixed(2)} %`,
     market: ticker.regularMarketChange.toFixed(2),
@@ -146,7 +132,7 @@ const Item = ({ ticker }) => {
   }
   if (expand) {
 
-    return <Stockinfo ticker={ticker} chartData={chartData} chartLoading={chartLoading} chartError={chartError} />;
+    return <Stockinfo ticker={ticker} />;
   }
 };
 

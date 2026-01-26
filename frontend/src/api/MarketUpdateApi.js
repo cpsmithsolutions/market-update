@@ -13,25 +13,42 @@ class MarketUpdateApi {
       Accept: "application/json",
       Authorization: `Bearer ${MarketUpdateApi.token}`,
     };
+    const config = { 
+      headers,
+      timeout: 60000, // 60 second timeout (allows for Render cold start)
+    };
 
     try {
       if (method === "get") {
-        return (await axios.get(url, { headers })).data;
+        return (await axios.get(url, config)).data;
       }
       if (method === "post") {
-        return (await axios.post(url, { ...data }, { headers })).data;
+        return (await axios.post(url, { ...data }, config)).data;
       }
 
       if (method === "patch") {
-        return (await axios.patch(url, { ...data }, { headers })).data;
+        return (await axios.patch(url, { ...data }, config)).data;
       }
 
       if (method === "delete") {
-        return (await axios.delete(url, { headers })).data;
+        return (await axios.delete(url, config)).data;
       }
     } catch (err) {
-      console.error("API Error:", err.response);
-      let message = err.response.data.error.message;
+      console.error("API Error:", err);
+      
+      // Handle timeout errors
+      if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
+        console.error("Request timeout - the server may be starting up. Please try again.", err);
+      }
+
+      // Handle network errors
+      if (!err.response) {
+        console.error("Network error - unable to reach the server. Please check your connection.", err);
+      }
+
+      // Handle API errors
+      let message = err.response?.data?.error?.message || "An error occurred";
+      console.error("API error response:", message, err);
       throw Array.isArray(message) ? message : [message];
     }
   }
