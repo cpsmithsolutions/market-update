@@ -1,0 +1,17 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+env:
+  API_DOMAIN: ${{ secrets.API_DOMAIN }}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping app
+        run: |
+          curl -fsS "https://${API_DOMAIN}/healthz"
