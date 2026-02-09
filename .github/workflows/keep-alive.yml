@@ -2,10 +2,7 @@ name: Supabase Keep Alive
 
 on:
   schedule:
-    # Every 14 minutes from 9am to 9pm EST (14:00 to 02:00 UTC)
-    - cron: "0,14,28,42 14-23 * * *"
-    - cron: "0,14,28,42 0,1 * * *"
-    - cron: "0 2 * * *"
+    - cron: "*/1 * * * *"
   workflow_dispatch:
 
 env:
