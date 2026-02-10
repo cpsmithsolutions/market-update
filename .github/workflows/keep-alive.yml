@@ -5,6 +5,8 @@ on:
     # Note: GitHub Actions scheduled workflows have a minimum interval of ~5 minutes
     # and may be delayed during periods of high load on GitHub's infrastructure.
     # The shortest practical interval is "*/5 * * * *" (every 5 minutes).
+    # Important: Scheduled workflows only run on the default branch and require
+    # a commit to the default branch to activate the schedule.
     - cron: "*/5 * * * *"  # Runs every 5 minutes
   workflow_dispatch:  # Allows manual triggering
 
@@ -17,4 +19,6 @@ jobs:
     steps:
       - name: Ping app
         run: |
+          echo "Pinging https://${API_DOMAIN}/healthz"
           curl -fsS "https://${API_DOMAIN}/healthz"
+          echo "Ping successful at $(date)"
