@@ -2,8 +2,11 @@ name: Supabase Keep Alive
 
 on:
   schedule:
-    - cron: "*/1 * * * *"
-  workflow_dispatch:
+    # Note: GitHub Actions scheduled workflows have a minimum interval of ~5 minutes
+    # and may be delayed during periods of high load on GitHub's infrastructure.
+    # The shortest practical interval is "*/5 * * * *" (every 5 minutes).
+    - cron: "*/5 * * * *"  # Runs every 5 minutes
+  workflow_dispatch:  # Allows manual triggering
 
 env:
   API_DOMAIN: ${{ secrets.API_DOMAIN }}
